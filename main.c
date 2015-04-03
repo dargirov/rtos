@@ -11,8 +11,7 @@ int main()
 	led.GPIO_Mode = GPIO_Mode_Out_PP;
 	GPIO_Init(GPIOC, &led);
 	
-	GPIO_SetBits(GPIOC, GPIO_Pin_8 | GPIO_Pin_9);
-	
+	//GPIO_SetBits(GPIOC, GPIO_Pin_8 | GPIO_Pin_9);
 	
 	int status = SysTick_Config(16700000);
 	//printf("%d", status);

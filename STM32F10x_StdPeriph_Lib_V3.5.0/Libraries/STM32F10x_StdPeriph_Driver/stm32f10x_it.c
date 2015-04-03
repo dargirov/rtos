@@ -134,14 +134,14 @@ void PendSV_Handler(void)
   */
 void SysTick_Handler(void)
 {
-	int pin = GPIO_ReadOutputDataBit(GPIOC, GPIO_Pin_12);
+	int pin = GPIO_ReadOutputDataBit(GPIOC, GPIO_Pin_8);
 	if (pin == Bit_SET)
 	{
-		GPIO_ResetBits(GPIOC, GPIO_Pin_12);
+		GPIO_ResetBits(GPIOC, GPIO_Pin_8);
 	}
 	else
 	{
-		GPIO_SetBits(GPIOC, GPIO_Pin_12);
+		GPIO_SetBits(GPIOC, GPIO_Pin_8);
 	}
 }
 
