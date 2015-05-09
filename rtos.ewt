@@ -2109,6 +2109,15 @@
     </settings>
   </configuration>
   <group>
+    <name>os</name>
+    <file>
+      <name>$PROJ_DIR$\os\kernel.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\os\kernel.h</name>
+    </file>
+  </group>
+  <group>
     <name>STM32F10x_StdPeriph_Lib_V3.5.0</name>
     <group>
       <name>Libraries</name>

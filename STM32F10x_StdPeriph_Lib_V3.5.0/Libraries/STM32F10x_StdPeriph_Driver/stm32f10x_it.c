@@ -23,6 +23,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f10x_it.h"
+#include "kernel.h"
 
 /** @addtogroup STM32F10x_StdPeriph_Template
   * @{
@@ -123,8 +124,12 @@ void DebugMon_Handler(void)
   * @param  None
   * @retval None
   */
+
+extern volatile task_table_t task_table[MAX_TASKS_COUNT];
 void PendSV_Handler(void)
 {
+	__asm("push {r4-r11}");
+	__asm("nop");
 }
 
 /**
@@ -134,15 +139,7 @@ void PendSV_Handler(void)
   */
 void SysTick_Handler(void)
 {
-	int pin = GPIO_ReadOutputDataBit(GPIOC, GPIO_Pin_8);
-	if (pin == Bit_SET)
-	{
-		GPIO_ResetBits(GPIOC, GPIO_Pin_8);
-	}
-	else
-	{
-		GPIO_SetBits(GPIOC, GPIO_Pin_8);
-	}
+	SCB->ICSR |= SCB_ICSR_PENDSVSET;
 }
 
 /******************************************************************************/
