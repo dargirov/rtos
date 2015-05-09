@@ -126,10 +126,11 @@ void DebugMon_Handler(void)
   */
 
 extern volatile task_table_t task_table[MAX_TASKS_COUNT];
+extern volatile task_stack_t task_stack[MAX_TASKS_COUNT];
 void PendSV_Handler(void)
 {
-	__asm("push {r4-r11}");
-	__asm("nop");
+	__ASM("mrs r0, msp");
+  __ASM("bx lr");
 }
 
 /**
