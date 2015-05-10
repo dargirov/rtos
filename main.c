@@ -3,24 +3,28 @@
 
 /* OS includes */
 #include "kernel.h"
+#include "hw_helper.h"
 extern volatile task_table_t task_table[MAX_TASKS_COUNT];
 
 void Task1()
 {
-	GPIO_SetBits(GPIOC, GPIO_Pin_12);
+	__asm("nop");
 	while(1)
 	{
+		GPIO_SetBits(GPIOC, GPIO_Pin_12);
 	}
 }
 
 void Task2()
-{
-	GPIO_ResetBits(GPIOC, GPIO_Pin_12);
+{	
+	__asm("nop");
 	while(1)
 	{
+		GPIO_ResetBits(GPIOC, GPIO_Pin_12);
 	}
 }
 
+uint32_t d = 0;
 int main()
 {
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
@@ -38,7 +42,9 @@ int main()
 	
 	int status = SysTick_Config(16777215);
 	//printf("%d", status);
-	
+	//__asm("mov	R12, #0x55aa");
+	//__asm("movt	R12, #0x77dd");
+	//d = __get_R12();
 	
 	InitTaskTable();
 	CreateTask(Task1);
@@ -47,13 +53,5 @@ int main()
 	__asm("nop");
 	while(1)
 	{
-loop:
-		for (int i = 0; i < MAX_TASKS_COUNT; i++)
-		{
-			if (task_table[i].flag_execution == 1)
-			{
-				(*task_table[i].task)();
-			}
-		}
 	}
 }

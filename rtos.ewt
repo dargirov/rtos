@@ -2111,6 +2111,12 @@
   <group>
     <name>os</name>
     <file>
+      <name>$PROJ_DIR$\os\hw_helper.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\os\hw_helper.h</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\os\kernel.c</name>
     </file>
     <file>

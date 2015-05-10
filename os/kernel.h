@@ -4,9 +4,9 @@
 
 typedef struct
 {
-	void (*task)();
-	uint32_t pc;
-	uint32_t sp;
+	//void (*task)();
+	//uint32_t pc;
+	//uint32_t sp;
 	uint32_t flag_in_use;
 	uint32_t flag_execution;
 } task_table_t;
