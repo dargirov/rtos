@@ -11,7 +11,7 @@ void Task1()
 	__asm("nop");
 	while(1)
 	{
-		GPIO_SetBits(GPIOC, GPIO_Pin_12);
+		GPIO_SetBits(GPIOC, GPIO_Pin_8);
 	}
 }
 
@@ -20,7 +20,25 @@ void Task2()
 	__asm("nop");
 	while(1)
 	{
-		GPIO_ResetBits(GPIOC, GPIO_Pin_12);
+		GPIO_ResetBits(GPIOC, GPIO_Pin_8);
+	}
+}
+
+void Task3()
+{
+	__asm("nop");
+	while(1)
+	{
+		GPIO_SetBits(GPIOC, GPIO_Pin_9);
+	}
+}
+
+void Task4()
+{
+	__asm("nop");
+	while(1)
+	{
+		GPIO_ResetBits(GPIOC, GPIO_Pin_9);
 	}
 }
 
@@ -49,6 +67,10 @@ int main()
 	InitTaskTable();
 	CreateTask(Task1);
 	CreateTask(Task2);
+	//CreateTask(Task3);
+	//CreateTask(Task4);
+	
+	task_table[0].flag_execution = 1;
 	
 	__asm("nop");
 	while(1)

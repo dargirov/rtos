@@ -33,7 +33,7 @@ typedef struct
 } task_stack_t;
 
 
-#define MAX_TASKS_COUNT 64
+#define MAX_TASKS_COUNT 4
 
 
 void InitTaskTable();

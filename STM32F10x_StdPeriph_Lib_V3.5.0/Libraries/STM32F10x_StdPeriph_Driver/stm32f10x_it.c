@@ -130,77 +130,57 @@ extern volatile task_stack_t task_stack[MAX_TASKS_COUNT];
 uint32_t hw_stack_buffer[8];
 uint32_t h;
 int *p;
+uint32_t msp;
+volatile int task_no = 0;
 void PendSV_Handler(void)
 {
-	register uint32_t reg = 0;
+	msp = __get_MSP() + 2 * 4;
+	
 	for (int i = 0; i < MAX_TASKS_COUNT; i++)
 	{
-		if (task_table[i].flag_in_use == 1 && task_table[i].flag_execution == 0)
+		// this is the currently running task
+		if (task_table[i].flag_in_use == 1 && task_table[i].flag_execution == 1) 
 		{
-			task_table[i].flag_execution = 1;
-			//dea = task_stack[i].pc & 0x00ff;
-			//task_stack[i].pc
-			//__asm("PUSH	{%0}" : : "r" (task_stack[i].pc));
-			//__asm("POP	{R0}");
-			//__asm("POP	{R0-R3, R12, LR}");
-			/*uint32_t msp = __get_MSP();
-			__asm("PUSH	{LR}");
+			task_table[i].flag_execution = 0;
 			memcpy(hw_stack_buffer, msp, sizeof(hw_stack_buffer));
-			//task_stack[i].r0 = hw_stack_buffer[0];
-			//task_stack[i].r1 = hw_stack_buffer[1];
-			//task_stack[i].r2 = hw_stack_buffer[2];
-			//task_stack[i].r3 = hw_stack_buffer[3];
-			//task_stack[i].r12 = hw_stack_buffer[4];
-			//task_stack[i].lr = hw_stack_buffer[5];
-			//task_stack[i].psr = hw_stack_buffer[7];
-			memcpy(msp  + 4 * 7, task_stack[i].pc, sizeof(task_stack[i].pc));
-			__asm("POP	{LR}");
-			__asm("BX	LR");*/
-			if (i == 0)
-			{
-			__asm("POP	{R0-R3}");
-			__asm("POP	{R5}"); //R12
-			__asm("POP	{R4}"); //LR
-			__asm("POP	{R4}");
-			__asm("MOV	R4, #0x03EF");
-			__asm("MOVT	R4, #0x0800");	
-			__asm("PUSH	{R4}");
-			__asm("PUSH	{LR}");
-			__asm("PUSH	{R5}"); //R12
-			__asm("PUSH	{R3}");
-			__asm("PUSH	{R2}");
-			__asm("PUSH	{R1}");
-			__asm("PUSH	{R0}");
-			__asm("BX	LR");
-			}
-			else
-			{
-			__asm("POP	{R0-R3}");
-			__asm("POP	{R5}"); //R12
-			__asm("POP	{R4}"); //LR
-			__asm("POP	{R4}");
-			__asm("MOV	R4, #0x03FF");
-			__asm("MOVT	R4, #0x0800");	
-			__asm("PUSH	{R4}");
-			__asm("PUSH	{LR}");
-			__asm("PUSH	{R5}"); //R12
-			__asm("PUSH	{R3}");
-			__asm("PUSH	{R2}");
-			__asm("PUSH	{R1}");
-			__asm("PUSH	{R0}");
-			__asm("BX	LR");
-			}
-			return;
+			task_stack[i].r0 = hw_stack_buffer[0];
+			task_stack[i].r1 = hw_stack_buffer[1];
+			task_stack[i].r2 = hw_stack_buffer[2];
+			task_stack[i].r3 = hw_stack_buffer[3];
+			task_stack[i].r12 = hw_stack_buffer[4];
+			task_stack[i].lr = hw_stack_buffer[5];
+			task_stack[i].pc = hw_stack_buffer[6];
+			task_stack[i].psr = hw_stack_buffer[7];
 		}
 	}
 	
-	for (int i = 0; i < MAX_TASKS_COUNT; i++)
+	for (int j = 0; j < MAX_TASKS_COUNT; j++)
+	{
+		if (task_table[j].flag_in_use == 1 && task_table[j].flag_execution == 0)
+		{
+			task_table[j].flag_execution = 1;
+			hw_stack_buffer[0] = task_stack[j].r0;
+			hw_stack_buffer[1] = task_stack[j].r1;
+			hw_stack_buffer[2] = task_stack[j].r2;
+			hw_stack_buffer[3] = task_stack[j].r3;
+			hw_stack_buffer[4] = task_stack[j].r12;
+			hw_stack_buffer[5] = 0xfffffff9; //task_stack[i].lr;
+			hw_stack_buffer[6] = task_stack[j].pc;
+			//hw_stack_buffer[7] = task_stack[i].psr & 0xFFFFF000;
+			memcpy(msp, hw_stack_buffer, sizeof(hw_stack_buffer) - 4);
+			//memcpy(msp + 4 * 5, &hw_stack_buffer[5], sizeof(hw_stack_buffer[5]));
+			//memcpy(msp + 4 * 6, &hw_stack_buffer[6], sizeof(hw_stack_buffer[6]));
+			break;
+		}
+	}
+	
+	/*for (int i = 0; i < MAX_TASKS_COUNT; i++)
 	{
 		if (task_table[i].flag_in_use == 1)
 		{
 			task_table[i].flag_execution = 0;
 		}
-	}
+	}*/
 }
 
 /**
