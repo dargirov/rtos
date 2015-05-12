@@ -2,11 +2,14 @@
 #define KERNEL_H
 #include "stm32F10x.h"
 
+typedef enum {High, Normal, Low} priority_t;
+
 typedef struct
 {
 	//void (*task)();
 	//uint32_t pc;
 	//uint32_t sp;
+	priority_t priority;
 	uint32_t flag_in_use;
 	uint32_t flag_execution;
 } task_table_t;
@@ -33,10 +36,12 @@ typedef struct
 } task_stack_t;
 
 
+
+
 #define MAX_TASKS_COUNT 4
 
 
 void InitTaskTable();
-void CreateTask(void (*args)());
+void CreateTask(void (*args)(), priority_t);
 
 #endif

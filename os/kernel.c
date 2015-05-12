@@ -1,4 +1,5 @@
 #include "kernel.h"
+#include "queue.h";
 
 volatile task_table_t task_table[MAX_TASKS_COUNT];
 volatile task_stack_t task_stack[MAX_TASKS_COUNT];
@@ -31,7 +32,7 @@ void InitTaskTable()
 }
 
 
-void CreateTask(void (*args)())
+void CreateTask(void (*args)(), priority_t priority)
 {
 	// find available table entry 
 	for (int i = 0; i < MAX_TASKS_COUNT; i++)
@@ -39,9 +40,12 @@ void CreateTask(void (*args)())
 		if (task_table[i].flag_in_use == 0)
 		{
 			//task_table[i].sp = __get_MSP();
+			task_table[i].priority = priority;
 			task_table[i].flag_in_use = 1;
 			task_table[i].flag_execution = 0;
 			task_stack[i].pc = (uint32_t) args + 2;
+			task_stack[i].lr = 0xfffffff9;
+			task_stack[i].psr = 0x01000000;
 			//task_table[i].task = args;
 			//task_table[i].pc = (uint32_t) args;
 			/*task_stack[i].r4 = __get_R4();
@@ -52,6 +56,19 @@ void CreateTask(void (*args)())
 			task_stack[i].r9 = __get_R9();
 			task_stack[i].r10 = __get_R10();
 			task_stack[i].r11 = __get_R11();*/
+			
+			switch (priority)
+			{
+			case High:
+				queue_high_push(i + 1);
+				break;
+			case Normal:
+				queue_normal_push(i + 1);
+				break;
+			case Low:
+				queue_low_push(i + 1);
+				break;
+			}
 			
 			return;
 		}

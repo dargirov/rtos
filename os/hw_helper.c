@@ -79,3 +79,4 @@ uint32_t __get_R12(void)
 	__ASM volatile ("mov %0, R12" : "=r" (reg) );
 	return reg;
 }
+

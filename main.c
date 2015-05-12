@@ -3,7 +3,7 @@
 
 /* OS includes */
 #include "kernel.h"
-#include "hw_helper.h"
+#include "queue.h"
 extern volatile task_table_t task_table[MAX_TASKS_COUNT];
 
 void Task1()
@@ -42,6 +42,7 @@ void Task4()
 	}
 }
 
+extern uint32_t queue_high_array[4];
 uint32_t d = 0;
 int main()
 {
@@ -58,21 +59,27 @@ int main()
 	//__set_PSP(0x20000900ul);
 	//__set_CONTROL(0x2);
 	
-	int status = SysTick_Config(16777215);
+	uint32_t status = SysTick_Config(16777215);
 	//printf("%d", status);
 	//__asm("mov	R12, #0x55aa");
 	//__asm("movt	R12, #0x77dd");
 	//d = __get_R12();
 	
 	InitTaskTable();
-	CreateTask(Task1);
-	CreateTask(Task2);
+	init_queues();
+	CreateTask(Task1, High);
+	CreateTask(Task2, High);
+	CreateTask(Task3, High);
+	CreateTask(Task4, High);
 	//CreateTask(Task3);
 	//CreateTask(Task4);
+
 	
-	task_table[0].flag_execution = 1;
+	
+	//task_table[0].flag_execution = 1;
 	
 	__asm("nop");
+	Task1();
 	while(1)
 	{
 	}
