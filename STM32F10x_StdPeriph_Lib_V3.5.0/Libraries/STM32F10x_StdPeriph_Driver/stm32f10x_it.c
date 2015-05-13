@@ -128,14 +128,16 @@ void DebugMon_Handler(void)
 
 extern volatile task_table_t task_table[MAX_TASKS_COUNT];
 extern volatile task_stack_t task_stack[MAX_TASKS_COUNT];
-uint32_t hw_stack_buffer[9];
+uint32_t hw_stack_buffer[8];
 uint32_t h;
 int *p;
 uint32_t msp;
 volatile int task_no = 0, task_index = 0;
 void PendSV_Handler(void)
 {
-	msp = __get_MSP() + 1 * 4;
+	// the compiler is pushing R7 and LR
+	// thats why i need to offset msp with 2 words
+	msp = __get_MSP() + 2 * 4;
 	
 
 	//for (int i = 0; i < 5; i++)
@@ -147,14 +149,14 @@ void PendSV_Handler(void)
 			//queue_high_pop();
 			task_table[task_index].flag_execution = 0;
 			memcpy(hw_stack_buffer, msp, sizeof(hw_stack_buffer));
-			task_stack[task_index].r0 = hw_stack_buffer[1];	
-			task_stack[task_index].r1 = hw_stack_buffer[2];
-			task_stack[task_index].r2 = hw_stack_buffer[3];
-			task_stack[task_index].r3 = hw_stack_buffer[4];
-			task_stack[task_index].r12 = hw_stack_buffer[5];
-			task_stack[task_index].lr = hw_stack_buffer[6];	//0xfffffff9;// hw_stack_buffer[7];
-			task_stack[task_index].pc = hw_stack_buffer[7] | 1;
-			task_stack[task_index].psr = hw_stack_buffer[8];
+			task_stack[task_index].r0 = hw_stack_buffer[0];	
+			task_stack[task_index].r1 = hw_stack_buffer[1];
+			task_stack[task_index].r2 = hw_stack_buffer[2];
+			task_stack[task_index].r3 = hw_stack_buffer[3];
+			task_stack[task_index].r12 = hw_stack_buffer[4];
+			task_stack[task_index].lr = hw_stack_buffer[5];	//0xfffffff9;// hw_stack_buffer[7];
+			task_stack[task_index].pc = hw_stack_buffer[6];// | 1;
+			task_stack[task_index].psr = hw_stack_buffer[7];
 			queue_high_push(task_no);
 		}
 		
@@ -164,15 +166,15 @@ void PendSV_Handler(void)
 		{
 			task_table[task_index].flag_execution = 1;
 			//hw_stack_buffer[0] = task_stack[task_index].lr;
-			hw_stack_buffer[1] = task_stack[task_index].r0;
-			hw_stack_buffer[2] = task_stack[task_index].r1;
-			hw_stack_buffer[3] = task_stack[task_index].r2;
-			hw_stack_buffer[4] = task_stack[task_index].r3;
-			hw_stack_buffer[5] = task_stack[task_index].r12;
-			hw_stack_buffer[6] = task_stack[task_index].lr;
-			hw_stack_buffer[7] = task_stack[task_index].pc; //0xfffffff9; //task_stack[i].lr;
-			hw_stack_buffer[8] = task_stack[task_index].psr;
-			memcpy(msp + 4, hw_stack_buffer + 1, sizeof(hw_stack_buffer) - 4);
+			hw_stack_buffer[0] = task_stack[task_index].r0;
+			hw_stack_buffer[1] = task_stack[task_index].r1;
+			hw_stack_buffer[2] = task_stack[task_index].r2;
+			hw_stack_buffer[3] = task_stack[task_index].r3;
+			hw_stack_buffer[4] = task_stack[task_index].r12;
+			hw_stack_buffer[5] = task_stack[task_index].lr;
+			hw_stack_buffer[6] = task_stack[task_index].pc; //0xfffffff9; //task_stack[i].lr;
+			hw_stack_buffer[7] = task_stack[task_index].psr;
+			memcpy(msp, hw_stack_buffer, sizeof(hw_stack_buffer));
 			//memcpy(msp + 4 * 5, &hw_stack_buffer[5], sizeof(hw_stack_buffer[5]));
 			//memcpy(msp + 4 * 6, &hw_stack_buffer[6], sizeof(hw_stack_buffer[6]));
 			//queue_high_push(task_no);
