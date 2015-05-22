@@ -284,4 +284,9 @@ void EXTI15_10_IRQHandler(void)
 {
 }
 
+void EXTI0_IRQHandler()
+{
+	GPIO_SetBits(GPIOC, GPIO_Pin_8);
+}
+
 /******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/
