@@ -4,6 +4,8 @@
 /* OS includes */
 #include "kernel.h"
 #include "queue.h"
+
+
 extern volatile task_table_t task_table[MAX_TASKS_COUNT];
 
 void Task1()
@@ -54,10 +56,24 @@ int main()
 	led.GPIO_Mode = GPIO_Mode_Out_PP;
 	GPIO_Init(GPIOC, &led);
 	
-	//GPIO_SetBits(GPIOC, GPIO_Pin_8 | GPIO_Pin_9);
+	GPIO_SetBits(GPIOC, GPIO_Pin_12);
 
 	//__set_PSP(0x20000900ul);
 	//__set_CONTROL(0x2);
+	
+	
+	
+	LCD_init();
+	LCD_clear_screen();
+	LCD_set_page_address(3);
+	LCD_set_column_address(64);
+	LCD_send_text("D");
+	
+	while(1)
+	{
+		//LCD_send_text("Daaaaa dddd");
+		
+	}
 	
 	uint32_t status = SysTick_Config(16777215);
 	//printf("%d", status);

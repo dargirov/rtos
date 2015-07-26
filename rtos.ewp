@@ -1893,6 +1893,15 @@
     </settings>
   </configuration>
   <group>
+    <name>lcd</name>
+    <file>
+      <name>$PROJ_DIR$\lcd\lcd.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\lcd\lcd.h</name>
+    </file>
+  </group>
+  <group>
     <name>os</name>
     <file>
       <name>$PROJ_DIR$\os\hw_helper.c</name>
@@ -1905,6 +1914,12 @@
     </file>
     <file>
       <name>$PROJ_DIR$\os\kernel.h</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\os\queue.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\os\queue.h</name>
     </file>
   </group>
   <group>
