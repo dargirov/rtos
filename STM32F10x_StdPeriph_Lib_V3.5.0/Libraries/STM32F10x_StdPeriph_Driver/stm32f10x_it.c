@@ -24,6 +24,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f10x_it.h"
 #include "kernel.h"
+#include "queue.h"
 
 /** @addtogroup STM32F10x_StdPeriph_Template
   * @{
@@ -135,101 +136,63 @@ uint32_t msp;
 volatile int task_no = 0, task_index = 0;
 void PendSV_Handler(void)
 {
+	
 	// the compiler is pushing R7 and LR
-	// thats why i need to offset msp with 2 words
-	msp = __get_MSP() + 2 * 4;
-	
+	// wee need to offset msp with 2 words
+	msp = __get_MSP() + 2 * sizeof(uint32_t);
 
-	//for (int i = 0; i < 5; i++)
-	//{
-		task_no = queue_high_pop();
-		task_index = task_no - 1;
-		if (task_no > 0)// && task_table[task_index].flag_in_use == 1 && task_table[task_index].flag_execution == 1) 
-		{
-			//queue_high_pop();
-			task_table[task_index].flag_execution = 0;
-			memcpy(hw_stack_buffer, msp, sizeof(hw_stack_buffer));
-			task_stack[task_index].r0 = hw_stack_buffer[0];	
-			task_stack[task_index].r1 = hw_stack_buffer[1];
-			task_stack[task_index].r2 = hw_stack_buffer[2];
-			task_stack[task_index].r3 = hw_stack_buffer[3];
-			task_stack[task_index].r12 = hw_stack_buffer[4];
-			task_stack[task_index].lr = hw_stack_buffer[5];	//0xfffffff9;// hw_stack_buffer[7];
-			task_stack[task_index].pc = hw_stack_buffer[6];// | 1;
-			task_stack[task_index].psr = hw_stack_buffer[7];
-			queue_high_push(task_no);
-		}
-		
-		task_no = queue_high_peek();
-		task_index = task_no - 1;
-		if (task_no > 0)// && task_table[task_index].flag_in_use == 1 )
-		{
-			task_table[task_index].flag_execution = 1;
-			//hw_stack_buffer[0] = task_stack[task_index].lr;
-			hw_stack_buffer[0] = task_stack[task_index].r0;
-			hw_stack_buffer[1] = task_stack[task_index].r1;
-			hw_stack_buffer[2] = task_stack[task_index].r2;
-			hw_stack_buffer[3] = task_stack[task_index].r3;
-			hw_stack_buffer[4] = task_stack[task_index].r12;
-			hw_stack_buffer[5] = task_stack[task_index].lr;
-			hw_stack_buffer[6] = task_stack[task_index].pc; //0xfffffff9; //task_stack[i].lr;
-			hw_stack_buffer[7] = task_stack[task_index].psr;
-			memcpy(msp, hw_stack_buffer, sizeof(hw_stack_buffer));
-			//memcpy(msp + 4 * 5, &hw_stack_buffer[5], sizeof(hw_stack_buffer[5]));
-			//memcpy(msp + 4 * 6, &hw_stack_buffer[6], sizeof(hw_stack_buffer[6]));
-			//queue_high_push(task_no);
-			//break;
-		}
-		
-	//	break;
-	//}
-	
-	
-	/*for (int i = 0; i < MAX_TASKS_COUNT; i++)
+	// stop the running task
+	// and save all registers to memory
+	task_no = queue_high_pop();
+	task_index = task_no - 1;
+	if (task_no > 0 && task_table[task_index].flag_in_use == 1 && task_table[task_index].flag_execution == 1) 
 	{
-		// this is the currently running task
-		if (task_table[i].flag_in_use == 1 && task_table[i].flag_execution == 1) 
-		{
-			task_table[i].flag_execution = 0;
-			memcpy(hw_stack_buffer, msp, sizeof(hw_stack_buffer));
-			task_stack[i].r0 = hw_stack_buffer[0];
-			task_stack[i].r1 = hw_stack_buffer[1];
-			task_stack[i].r2 = hw_stack_buffer[2];
-			task_stack[i].r3 = hw_stack_buffer[3];
-			task_stack[i].r12 = hw_stack_buffer[4];
-			task_stack[i].lr = hw_stack_buffer[5];
-			task_stack[i].pc = hw_stack_buffer[6];
-			task_stack[i].psr = hw_stack_buffer[7];
-		}
+		task_table[task_index].flag_execution = 0;
+		memcpy(hw_stack_buffer, msp, sizeof(hw_stack_buffer));
+		task_stack[task_index].r0 = hw_stack_buffer[0];	
+		task_stack[task_index].r1 = hw_stack_buffer[1];
+		task_stack[task_index].r2 = hw_stack_buffer[2];
+		task_stack[task_index].r3 = hw_stack_buffer[3];
+		task_stack[task_index].r12 = hw_stack_buffer[4];
+		task_stack[task_index].lr = hw_stack_buffer[5];
+		task_stack[task_index].pc = hw_stack_buffer[6];
+		task_stack[task_index].psr = hw_stack_buffer[7];
+		task_stack[task_index].r4 = __get_R4();
+		task_stack[task_index].r5 = __get_R5();
+		task_stack[task_index].r6 = __get_R6();
+		task_stack[task_index].r7 = __get_R7();
+		task_stack[task_index].r8 = __get_R8();
+		task_stack[task_index].r9 = __get_R9();
+		task_stack[task_index].r10 = __get_R10();
+		task_stack[task_index].r11 = __get_R11();
+		queue_high_push(task_no);
 	}
 	
-	for (int j = 0; j < MAX_TASKS_COUNT; j++)
+	task_no = queue_high_peek();
+	if (task_no == 0) // no tasks with high priority
 	{
-		if (task_table[j].flag_in_use == 1 && task_table[j].flag_execution == 0)
-		{
-			task_table[j].flag_execution = 1;
-			hw_stack_buffer[0] = task_stack[j].r0;
-			hw_stack_buffer[1] = task_stack[j].r1;
-			hw_stack_buffer[2] = task_stack[j].r2;
-			hw_stack_buffer[3] = task_stack[j].r3;
-			hw_stack_buffer[4] = task_stack[j].r12;
-			hw_stack_buffer[5] = 0xfffffff9; //task_stack[i].lr;
-			hw_stack_buffer[6] = task_stack[j].pc;
-			//hw_stack_buffer[7] = task_stack[i].psr & 0xFFFFF000;
-			memcpy(msp, hw_stack_buffer, sizeof(hw_stack_buffer) - 4);
-			//memcpy(msp + 4 * 5, &hw_stack_buffer[5], sizeof(hw_stack_buffer[5]));
-			//memcpy(msp + 4 * 6, &hw_stack_buffer[6], sizeof(hw_stack_buffer[6]));
-			break;
-		}
-	}*/
+		task_no = queue_normal_peek();	
+	}
 	
-	/*for (int i = 0; i < MAX_TASKS_COUNT; i++)
+	if (task_no == 0) // no tasks with normal priority
 	{
-		if (task_table[i].flag_in_use == 1)
-		{
-			task_table[i].flag_execution = 0;
-		}
-	}*/
+		task_no = queue_low_peek();	
+	}
+	
+	task_index = task_no - 1;
+	if (task_no > 0 && task_table[task_index].flag_in_use == 1 )
+	{
+		task_table[task_index].flag_execution = 1;
+		hw_stack_buffer[0] = task_stack[task_index].r0;
+		hw_stack_buffer[1] = task_stack[task_index].r1;
+		hw_stack_buffer[2] = task_stack[task_index].r2;
+		hw_stack_buffer[3] = task_stack[task_index].r3;
+		hw_stack_buffer[4] = task_stack[task_index].r12;
+		hw_stack_buffer[5] = task_stack[task_index].lr;
+		hw_stack_buffer[6] = task_stack[task_index].pc;
+		hw_stack_buffer[7] = task_stack[task_index].psr;
+		memcpy(msp, hw_stack_buffer, sizeof(hw_stack_buffer));
+	}
 }
 
 /**

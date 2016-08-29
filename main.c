@@ -10,37 +10,57 @@ extern volatile task_table_t task_table[MAX_TASKS_COUNT];
 
 void Task1()
 {
-	__asm("nop");
+	//__asm("nop");
+	LCD_send_text("Task1");
+	TaskDelete();
 	while(1)
 	{
-		GPIO_SetBits(GPIOC, GPIO_Pin_8);
+		
+		//GPIO_SetBits(GPIOC, GPIO_Pin_8);
 	}
 }
 
 void Task2()
 {	
-	__asm("nop");
+	//__asm("nop");
+	LCD_send_text("Task2");
+	//TaskDelete();
 	while(1)
 	{
-		GPIO_ResetBits(GPIOC, GPIO_Pin_8);
+		//LCD_send_text("Task2");
+		//GPIO_ResetBits(GPIOC, GPIO_Pin_8);
 	}
 }
 
 void Task3()
 {
-	__asm("nop");
+	//__asm("nop");
+	LCD_send_text("Task3");
+	//TaskDelete();
 	while(1)
 	{
-		GPIO_SetBits(GPIOC, GPIO_Pin_9);
+		//LCD_send_text("Task3");
+		//GPIO_SetBits(GPIOC, GPIO_Pin_9);
 	}
 }
 
 void Task4()
 {
-	__asm("nop");
+	//__asm("nop");
+	LCD_send_text("Task4");
+	TaskDelete();
 	while(1)
 	{
-		GPIO_ResetBits(GPIOC, GPIO_Pin_9);
+		//LCD_send_text("Task4");
+		//GPIO_ResetBits(GPIOC, GPIO_Pin_9);
+	}
+}
+
+void TaskIdle()
+{
+	//__asm("nop");
+	while(1)
+	{
 	}
 }
 
@@ -65,15 +85,15 @@ int main()
 	
 	LCD_init();
 	LCD_clear_screen();
-	LCD_set_page_address(3);
-	LCD_set_column_address(64);
-	LCD_send_text("D");
+	//LCD_set_page_address(3);
+	//LCD_set_column_address(64);
+	//LCD_send_text("D");
 	
-	while(1)
+	/*while(1)
 	{
 		//LCD_send_text("Daaaaa dddd");
 		
-	}
+	}*/
 	
 	uint32_t status = SysTick_Config(16777215);
 	//printf("%d", status);
@@ -81,21 +101,20 @@ int main()
 	//__asm("movt	R12, #0x77dd");
 	//d = __get_R12();
 	
-	InitTaskTable();
+	TaskTableInit();
 	init_queues();
-	CreateTask(Task1, High);
-	CreateTask(Task2, High);
-	CreateTask(Task3, High);
-	CreateTask(Task4, High);
+	/*TaskCreate(Task1, High);
+	TaskCreate(Task2, High);
+	TaskCreate(Task3, High);
+	TaskCreate(TaskIdle, High);*/
 	//CreateTask(Task3);
 	//CreateTask(Task4);
+	//TaskStartScheduler();
 
 	
 	
 	//task_table[0].flag_execution = 1;
 	
-	__asm("nop");
-	Task1();
 	while(1)
 	{
 	}

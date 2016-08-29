@@ -41,7 +41,9 @@ typedef struct
 #define MAX_TASKS_COUNT 4
 
 
-void InitTaskTable();
-void CreateTask(void (*args)(), priority_t);
+void TaskTableInit();
+void TaskCreate(void (*args)(), priority_t);
+void TaskDelete();
+void TaskStartScheduler();
 
 #endif
