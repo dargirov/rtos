@@ -11,7 +11,7 @@ extern volatile task_table_t task_table[MAX_TASKS_COUNT];
 void Task1()
 {
 	//__asm("nop");
-	LCD_send_text("Task1");
+	//LCD_send_text("Task1");
 	TaskDelete();
 	while(1)
 	{
@@ -23,8 +23,8 @@ void Task1()
 void Task2()
 {	
 	//__asm("nop");
-	LCD_send_text("Task2");
-	//TaskDelete();
+	//LCD_send_text("Task2");
+	TaskDelete();
 	while(1)
 	{
 		//LCD_send_text("Task2");
@@ -35,7 +35,7 @@ void Task2()
 void Task3()
 {
 	//__asm("nop");
-	LCD_send_text("Task3");
+	//LCD_send_text("Task3");
 	//TaskDelete();
 	while(1)
 	{
@@ -47,7 +47,7 @@ void Task3()
 void Task4()
 {
 	//__asm("nop");
-	LCD_send_text("Task4");
+	//LCD_send_text("Task4");
 	TaskDelete();
 	while(1)
 	{
@@ -83,8 +83,9 @@ int main()
 	
 	
 	
-	LCD_init();
-	LCD_clear_screen();
+	//LCD_init();
+	//LCD_clear_screen();
+	
 	//LCD_set_page_address(3);
 	//LCD_set_column_address(64);
 	//LCD_send_text("D");
@@ -103,13 +104,13 @@ int main()
 	
 	TaskTableInit();
 	init_queues();
-	/*TaskCreate(Task1, High);
+	TaskCreate(Task1, High);
 	TaskCreate(Task2, High);
-	TaskCreate(Task3, High);
-	TaskCreate(TaskIdle, High);*/
+	TaskCreate(Task3, Low);
+	//TaskCreate(TaskIdle, High);
 	//CreateTask(Task3);
 	//CreateTask(Task4);
-	//TaskStartScheduler();
+	TaskStartScheduler();
 
 	
 	

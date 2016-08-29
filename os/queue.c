@@ -63,6 +63,11 @@ uint32_t queue_normal_pop()
 	return queue_pop(queue_normal_array, &normal_front);
 }
 
+uint32_t queue_normal_peek()
+{
+	return queue_peek(queue_normal_array, &normal_front);
+}
+
 
 void queue_low_push(uint32_t elem)
 {
@@ -72,4 +77,9 @@ void queue_low_push(uint32_t elem)
 uint32_t queue_low_pop()
 {
 	return queue_pop(queue_low_array, &low_front);
+}
+
+uint32_t queue_low_peek()
+{
+	return queue_peek(queue_low_array, &low_front);
 }

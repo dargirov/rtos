@@ -139,11 +139,38 @@ void PendSV_Handler(void)
 	
 	// the compiler is pushing R7 and LR
 	// wee need to offset msp with 2 words
-	msp = __get_MSP() + 2 * sizeof(uint32_t);
+	msp = __get_MSP() + 4 * sizeof(uint32_t);
 
 	// stop the running task
 	// and save all registers to memory
-	task_no = queue_high_pop();
+	//task_no = queue_high_pop();
+	int type = 1;
+	task_no = queue_high_peek();
+	if (task_no == 0) // no tasks with high priority
+	{
+		task_no = queue_normal_peek();
+		type = 2;
+	}
+	
+	if (task_no == 0) // no tasks with normal priority
+	{
+		task_no = queue_low_peek();
+		type = 3;
+	}
+	
+	if (type == 1)
+	{
+		task_no = queue_high_pop();
+	}
+	else if (type == 2)
+	{
+		task_no = queue_normal_pop();
+	}
+	else
+	{
+		task_no = queue_low_pop();
+	}
+	
 	task_index = task_no - 1;
 	if (task_no > 0 && task_table[task_index].flag_in_use == 1 && task_table[task_index].flag_execution == 1) 
 	{
@@ -165,20 +192,31 @@ void PendSV_Handler(void)
 		task_stack[task_index].r9 = __get_R9();
 		task_stack[task_index].r10 = __get_R10();
 		task_stack[task_index].r11 = __get_R11();
-		queue_high_push(task_no);
+		if (type == 1)
+		{
+			queue_high_push(task_no);
+		}
+		else if (type == 2)
+		{
+			queue_normal_push(task_no);
+		}
+		else
+		{
+			queue_low_push(task_no);
+		}
 	}
+	
 	
 	task_no = queue_high_peek();
 	if (task_no == 0) // no tasks with high priority
 	{
-		task_no = queue_normal_peek();	
+		task_no = queue_normal_peek();
 	}
 	
 	if (task_no == 0) // no tasks with normal priority
 	{
-		task_no = queue_low_peek();	
+		task_no = queue_low_peek();
 	}
-	
 	task_index = task_no - 1;
 	if (task_no > 0 && task_table[task_index].flag_in_use == 1 )
 	{
