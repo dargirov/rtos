@@ -45,5 +45,8 @@ void TaskTableInit();
 void TaskCreate(void (*args)(), priority_t);
 void TaskDelete();
 void TaskStartScheduler();
+void SwitchTask();
+void SaveStackFrame(uint32_t);
+void SysTickIncrement();
 
 #endif

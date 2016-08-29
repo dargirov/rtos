@@ -12,7 +12,7 @@ void Task1()
 {
 	//__asm("nop");
 	//LCD_send_text("Task1");
-	TaskDelete();
+	//TaskDelete();
 	while(1)
 	{
 		
@@ -24,7 +24,7 @@ void Task2()
 {	
 	//__asm("nop");
 	//LCD_send_text("Task2");
-	TaskDelete();
+	//TaskDelete();
 	while(1)
 	{
 		//LCD_send_text("Task2");
