@@ -1,0 +1,10 @@
+Debug
+settings
+Backup*
+rtos.dep
+rtos.ewd
+rtos.ewp
+STM32F10x_StdPeriph_Lib_V3.5.0/stm32f10x_stdperiph_lib_um.chm
+STM32F10x_StdPeriph_Lib_V3.5.0/Project/
+STM32F10x_StdPeriph_Lib_V3.5.0/Utilities/
+STM32F10x_StdPeriph_Lib_V3.5.0/_htmresc/
