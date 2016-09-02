@@ -4,6 +4,7 @@
 /* OS includes */
 #include "kernel.h"
 #include "queue.h"
+#include "mutex.h"
 
 
 extern volatile task_table_t task_table[MAX_TASKS_COUNT];
@@ -64,8 +65,9 @@ void TaskIdle()
 	}
 }
 
-extern uint32_t queue_high_array[4];
 uint32_t d = 0;
+mutex_t mutex;
+queue_t queue;
 int main()
 {
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
@@ -102,8 +104,24 @@ int main()
 	//__asm("movt	R12, #0x77dd");
 	//d = __get_R12();
 	
-	TaskTableInit();
-	init_queues();
+	mutex = MutexCreate();
+	if (MutexTake(&mutex))
+	{
+		MutexGive(&mutex);
+	}
+	
+	while (MutexTake(&mutex))
+	{
+		int p = 1;
+	}
+	
+	queue = QueueCreate(10);
+	QueueSend(&queue, 5);
+	QueueSend(&queue, 6);
+	QueueSend(&queue, 7);
+	QueueSend(&queue, 4);
+	
+	TaskTableInit();	
 	TaskCreate(Task1, Low);
 	TaskCreate(Task2, Low);
 	TaskCreate(Task3, Low);
