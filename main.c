@@ -18,7 +18,9 @@ void Task1()
 	
 	while(1)
 	{
-		GPIO_SetBits(GPIOC, GPIO_Pin_12);
+		//GPIO_ResetBits(GPIOC, GPIO_Pin_7);
+		//GPIO_ResetBits(GPIOC, GPIO_Pin_5);
+		//GPIO_SetBits(GPIOC, GPIO_Pin_12);
 	}
 }
 
@@ -29,8 +31,9 @@ void Task2()
 	//TaskDelete();
 	while(1)
 	{
-		//LCD_send_text("Task2");
-		GPIO_ResetBits(GPIOC, GPIO_Pin_12);
+		//GPIO_ResetBits(GPIOC, GPIO_Pin_7);
+		//GPIO_SetBits(GPIOC, GPIO_Pin_5);
+		//GPIO_ResetBits(GPIOC, GPIO_Pin_12);
 	}
 }
 
@@ -41,8 +44,9 @@ void Task3()
 	//TaskDelete();
 	while(1)
 	{
-		//LCD_send_text("Task3");
-		//GPIO_SetBits(GPIOC, GPIO_Pin_9);
+		GPIO_SetBits(GPIOC, GPIO_Pin_7);
+		GPIO_ResetBits(GPIOC, GPIO_Pin_5);
+		GPIO_ResetBits(GPIOC, GPIO_Pin_12);
 	}
 }
 
@@ -75,7 +79,7 @@ int main()
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
 	
 	GPIO_InitTypeDef led;
-	led.GPIO_Pin = GPIO_Pin_8 | GPIO_Pin_9 | GPIO_Pin_12;
+	led.GPIO_Pin = GPIO_Pin_7 | GPIO_Pin_5 | GPIO_Pin_12;
 	led.GPIO_Speed = GPIO_Speed_10MHz;
 	led.GPIO_Mode = GPIO_Mode_Out_PP;
 	GPIO_Init(GPIOC, &led);
@@ -107,9 +111,9 @@ int main()
 	//d = __get_R12();
 	
 
-	TaskTableInit();
-	TaskCreate(Task1, High);
-	TaskCreate(Task2, High);
+	//TaskTableInit();
+	//TaskCreate(Task1, High);
+	//TaskCreate(Task2, High);
 
 	
 	mutex = MutexCreate();
@@ -133,9 +137,9 @@ int main()
 	QueueDelete(&queue);
 	
 	TaskTableInit();	
-	TaskCreate(Task1, Low);
-	TaskCreate(Task2, Low);
-	TaskCreate(Task3, Low);
+	TaskCreate(Task1, High);
+	TaskCreate(Task2, High);
+	//TaskCreate(Task3, Normal);
 	//TaskCreate(TaskIdle, High);
 	//CreateTask(Task3);
 	//CreateTask(Task4);
