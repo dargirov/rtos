@@ -6,75 +6,7 @@
 #include "queue.h"
 #include "mutex.h"
 
-
-extern volatile task_table_t task_table[MAX_TASKS_COUNT];
-mutex_t mutex;
-
-void Task1()
-{
-	//__asm("nop");
-	//LCD_send_text("Task1");
-	//TaskDelete();
-	
-	while(1)
-	{
-		//GPIO_ResetBits(GPIOC, GPIO_Pin_7);
-		//GPIO_ResetBits(GPIOC, GPIO_Pin_5);
-		//GPIO_SetBits(GPIOC, GPIO_Pin_12);
-	}
-}
-
-void Task2()
-{	
-	//__asm("nop");
-	//LCD_send_text("Task2");
-	//TaskDelete();
-	while(1)
-	{
-		//GPIO_ResetBits(GPIOC, GPIO_Pin_7);
-		//GPIO_SetBits(GPIOC, GPIO_Pin_5);
-		//GPIO_ResetBits(GPIOC, GPIO_Pin_12);
-	}
-}
-
-void Task3()
-{
-	//__asm("nop");
-	//LCD_send_text("Task3");
-	//TaskDelete();
-	while(1)
-	{
-		GPIO_SetBits(GPIOC, GPIO_Pin_7);
-		GPIO_ResetBits(GPIOC, GPIO_Pin_5);
-		GPIO_ResetBits(GPIOC, GPIO_Pin_12);
-	}
-}
-
-void Task4()
-{
-	//__asm("nop");
-	//LCD_send_text("Task4");
-	TaskDelete();
-	while(1)
-	{
-		//LCD_send_text("Task4");
-		//GPIO_ResetBits(GPIOC, GPIO_Pin_9);
-	}
-}
-
-void TaskIdle()
-{
-	//__asm("nop");
-	while(1)
-	{
-	}
-}
-
-
-uint32_t d = 0;
-
-queue_t queue;
-int main()
+void TaskBoardInit()
 {
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
 	
@@ -84,72 +16,54 @@ int main()
 	led.GPIO_Mode = GPIO_Mode_Out_PP;
 	GPIO_Init(GPIOC, &led);
 	
-	GPIO_SetBits(GPIOC, GPIO_Pin_12);
-
-	//__set_PSP(0x20000900ul);
-	//__set_CONTROL(0x2);
+	SysTick_Config(16777215);
 	
-	
-	
-	//LCD_init();
-	//LCD_clear_screen();
-	
-	//LCD_set_page_address(3);
-	//LCD_set_column_address(64);
-	//LCD_send_text("D");
-	
-	/*while(1)
-	{
-		//LCD_send_text("Daaaaa dddd");
-		
-	}*/
-	
-	uint32_t status = SysTick_Config(16777215);
-	//printf("%d", status);
-	//__asm("mov	R12, #0x55aa");
-	//__asm("movt	R12, #0x77dd");
-	//d = __get_R12();
-	
-
-	//TaskTableInit();
-	//TaskCreate(Task1, High);
-	//TaskCreate(Task2, High);
-
-	
-	mutex = MutexCreate();
-	if (MutexTake(&mutex))
-	{
-		//MutexGive(&mutex);
-	}
-	/*while (!MutexTake(&mutex))
-	{
-		TaskDelay();
-	}*/
-	
-	
-	queue = QueueCreate(10);
-	QueuePush(&queue, 1);
-	QueuePush(&queue, 2);
-	QueuePush(&queue, 3);
-	uint32_t element = QueuePop(&queue);
-	uint32_t count = QueueCount(&queue);
-	printf("%d", count);
-	QueueDelete(&queue);
-	
-	TaskTableInit();	
-	TaskCreate(Task1, High);
-	TaskCreate(Task2, High);
-	//TaskCreate(Task3, Normal);
-	//TaskCreate(TaskIdle, High);
-	//CreateTask(Task3);
-	//CreateTask(Task4);
-	TaskStartScheduler();
-
-	
-	
-	//task_table[0].flag_execution = 1;
+	TaskDelete();
 	
 	while(1)
 	{
 	}
 }
+
+void Task1()
+{	
+	while(1)
+	{
+	}
+}
+
+void Task2()
+{
+	while(1)
+	{
+	}
+}
+
+int main()
+{
+	TaskTableInit();	
+	TaskCreate(TaskBoardInit, High);
+	TaskCreate(Task1, Normal);
+	TaskCreate(Task2, Normal);
+	TaskStartScheduler();
+	
+	while(1)
+	{
+	}
+}
+/*
+mutex_t mutex = MutexCreate();
+if (MutexTake(&mutex))
+{
+	MutexGive(&mutex);
+}
+
+queue_t queue = QueueCreate(10);
+QueuePush(&queue, 1);
+QueuePush(&queue, 2);
+QueuePush(&queue, 3);
+uint32_t element = QueuePop(&queue);
+uint32_t count = QueueCount(&queue);
+QueueDelete(&queue);
+
+*/

@@ -130,20 +130,15 @@ void DebugMon_Handler(void)
 extern volatile task_table_t task_table[MAX_TASKS_COUNT];
 extern volatile task_stack_t task_stack[MAX_TASKS_COUNT];
 uint32_t hw_stack_buffer[8];
-uint32_t h;
-int *p;
 uint32_t msp;
 volatile int task_no = 0, task_index = 0;
 void PendSV_Handler(void)
 {
 	
-	// the compiler is pushing R7 and LR
-	// wee need to offset msp with 2 words
+	// the compiler is pushing R3-R5 and LR
+	// wee need to offset msp with 4 words
 	msp = __get_MSP() + 4 * sizeof(uint32_t);
 
-	// stop the running task
-	// and save all registers to memory
-	//task_no = queue_high_pop();
 	int type = 1;
 	task_no = queue_high_peek();
 	if (task_no == 0) // no tasks with high priority
