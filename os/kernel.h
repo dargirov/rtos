@@ -2,13 +2,12 @@
 #define KERNEL_H
 #include "stm32F10x.h"
 
+#define MAX_TASKS_COUNT 4
+
 typedef enum {High, Normal, Low} priority_t;
 
 typedef struct
 {
-	//void (*task)();
-	//uint32_t pc;
-	//uint32_t sp;
 	priority_t priority;
 	uint32_t flag_in_use;
 	uint32_t flag_execution;
@@ -35,18 +34,20 @@ typedef struct
 	uint32_t psr;
 } task_stack_t;
 
-
-
-
-#define MAX_TASKS_COUNT 4
-
-
 void TaskTableInit();
 void TaskCreate(void (*args)(), priority_t);
 void TaskDelete();
 void TaskStartScheduler();
-void SwitchTask();
-void SaveStackFrame(uint32_t);
-void SysTickIncrement();
+
+void init_queues();
+void queue_high_push(uint32_t);
+uint32_t queue_high_pop();
+uint32_t queue_high_peek();
+void queue_normal_push(uint32_t);
+uint32_t queue_normal_pop();
+uint32_t queue_normal_peek();
+void queue_low_push(uint32_t);
+uint32_t queue_low_pop();
+uint32_t queue_low_peek();
 
 #endif

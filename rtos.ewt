@@ -2132,6 +2132,15 @@
       <name>$PROJ_DIR$\os\kernel.h</name>
     </file>
     <file>
+<<<<<<< HEAD
+=======
+      <name>$PROJ_DIR$\os\mutex.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\os\mutex.h</name>
+    </file>
+    <file>
+>>>>>>> f68e6c71688085b213058a31f2c0f793ffd025d9
       <name>$PROJ_DIR$\os\queue.c</name>
     </file>
     <file>

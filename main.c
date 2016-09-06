@@ -4,6 +4,10 @@
 /* OS includes */
 #include "kernel.h"
 #include "queue.h"
+<<<<<<< HEAD
+=======
+#include "mutex.h"
+>>>>>>> f68e6c71688085b213058a31f2c0f793ffd025d9
 
 
 extern volatile task_table_t task_table[MAX_TASKS_COUNT];
@@ -36,7 +40,11 @@ void Task3()
 {
 	//__asm("nop");
 	//LCD_send_text("Task3");
+<<<<<<< HEAD
 	//TaskDelete();
+=======
+	TaskDelete();
+>>>>>>> f68e6c71688085b213058a31f2c0f793ffd025d9
 	while(1)
 	{
 		//LCD_send_text("Task3");
@@ -64,8 +72,14 @@ void TaskIdle()
 	}
 }
 
+<<<<<<< HEAD
 extern uint32_t queue_high_array[4];
 uint32_t d = 0;
+=======
+uint32_t d = 0;
+mutex_t mutex;
+queue_t queue;
+>>>>>>> f68e6c71688085b213058a31f2c0f793ffd025d9
 int main()
 {
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
@@ -102,10 +116,33 @@ int main()
 	//__asm("movt	R12, #0x77dd");
 	//d = __get_R12();
 	
+<<<<<<< HEAD
 	TaskTableInit();
 	init_queues();
 	TaskCreate(Task1, High);
 	TaskCreate(Task2, High);
+=======
+	mutex = MutexCreate();
+	if (MutexTake(&mutex))
+	{
+		MutexGive(&mutex);
+	}
+	
+	while (MutexTake(&mutex))
+	{
+		int p = 1;
+	}
+	
+	queue = QueueCreate(10);
+	QueueSend(&queue, 5);
+	QueueSend(&queue, 6);
+	QueueSend(&queue, 7);
+	QueueSend(&queue, 4);
+	
+	TaskTableInit();	
+	TaskCreate(Task1, Low);
+	TaskCreate(Task2, Low);
+>>>>>>> f68e6c71688085b213058a31f2c0f793ffd025d9
 	TaskCreate(Task3, Low);
 	//TaskCreate(TaskIdle, High);
 	//CreateTask(Task3);
