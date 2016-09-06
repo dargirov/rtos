@@ -37,6 +37,7 @@ typedef struct
 void TaskTableInit();
 void TaskCreate(void (*args)(), priority_t);
 void TaskDelete();
+void TaskDelay();
 void TaskStartScheduler();
 
 void init_queues();

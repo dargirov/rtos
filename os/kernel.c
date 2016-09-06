@@ -96,6 +96,20 @@ void TaskDelete()
 	}
 }
 
+void TaskDelay()
+{
+	for (int i = 0; i < MAX_TASKS_COUNT; i++)
+	{
+		// find the running task
+		if (task_table[i].flag_execution == 1)
+		{
+			// force content switch
+			SCB->ICSR |= SCB_ICSR_PENDSVSET;
+			break;
+		}
+	}
+}
+
 void TaskStartScheduler()
 {
 	for (int i = 0; i < MAX_TASKS_COUNT; i++)
@@ -110,15 +124,15 @@ void TaskStartScheduler()
 	}
 }
 
-static uint32_t queue_high_array[4], high_front = 0, high_rear = 0;
-static uint32_t queue_normal_array[4], normal_front = 0, normal_rear = 0;
-static uint32_t queue_low_array[4], low_front = 0, low_rear = 0;
+static uint32_t queue_high_array[MAX_TASKS_COUNT], high_front = 0, high_rear = 0;
+static uint32_t queue_normal_array[MAX_TASKS_COUNT], normal_front = 0, normal_rear = 0;
+static uint32_t queue_low_array[MAX_TASKS_COUNT], low_front = 0, low_rear = 0;
 
 static void queue_push(uint32_t *a, uint32_t elem, uint32_t *rear)
 {
 	*(a + *rear) = elem;
 	(*rear)++;
-	*rear = *rear % 4;
+	*rear = *rear % MAX_TASKS_COUNT;
 }
 
 static uint32_t queue_pop(uint32_t *a, uint32_t *front)
@@ -126,7 +140,7 @@ static uint32_t queue_pop(uint32_t *a, uint32_t *front)
 	uint32_t elem = *(a + *front);
 	*(a + *front) = 0;
 	(*front)++;
-	*front = *front % 4;
+	*front = *front % MAX_TASKS_COUNT;
 	return elem;
 }
 
@@ -137,9 +151,9 @@ static uint32_t queue_peek(uint32_t *a, uint32_t *front)
 }
 
 
-void init_queues()
+static void init_queues()
 {
-	for (int i = 0; i < 4; i++)
+	for (int i = 0; i < MAX_TASKS_COUNT; i++)
 	{
 		queue_high_array[i] = 0;
 		queue_normal_array[i] = 0;

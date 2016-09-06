@@ -57,10 +57,7 @@ void NMI_Handler(void)
   */
 void HardFault_Handler(void)
 {
-<<<<<<< HEAD
-=======
 	GPIO_SetBits(GPIOC, GPIO_Pin_9);
->>>>>>> f68e6c71688085b213058a31f2c0f793ffd025d9
   /* Go to infinite loop when Hard Fault exception occurs */
   while (1)
   {
@@ -129,14 +126,6 @@ void DebugMon_Handler(void)
   * @param  None
   * @retval None
   */
-<<<<<<< HEAD
-void PendSV_Handler(void)
-{
-	// the compiler is pushing R7 and LR
-	// wee need to offset msp with 2 words
-	SaveStackFrame(2);
-	SwitchTask();
-=======
 
 extern volatile task_table_t task_table[MAX_TASKS_COUNT];
 extern volatile task_stack_t task_stack[MAX_TASKS_COUNT];
@@ -242,7 +231,6 @@ void PendSV_Handler(void)
 		hw_stack_buffer[7] = task_stack[task_index].psr;
 		memcpy(msp, hw_stack_buffer, sizeof(hw_stack_buffer));
 	}
->>>>>>> f68e6c71688085b213058a31f2c0f793ffd025d9
 }
 
 /**
@@ -250,16 +238,10 @@ void PendSV_Handler(void)
   * @param  None
   * @retval None
   */
-<<<<<<< HEAD
-void SysTick_Handler(void)
-{
-	SysTickIncrement();
-=======
 extern volatile uint32_t SysTick_Counter;
 void SysTick_Handler(void)
 {
 	SysTick_Counter++;
->>>>>>> f68e6c71688085b213058a31f2c0f793ffd025d9
 	SCB->ICSR |= SCB_ICSR_PENDSVSET;
 }
 

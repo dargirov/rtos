@@ -4,20 +4,16 @@
 
 typedef struct
 {
-	uint32_t len;
 	uint32_t *elements;
 	uint32_t size;
-	queue_elem_t *front;
-	queue_elem_t *back;
+	uint32_t front;
+	uint32_t rear;
 } queue_t;
 
-typedef struct
-{
-	uint32_t value;
-	queue_t *next;
-} queue_elem_t;
-
-
-queue_t QueueCreate();
+queue_t QueueCreate(uint32_t);
+void QueuePush(queue_t *, uint32_t);
+uint32_t QueuePop(queue_t *);
+uint32_t QueueCount(queue_t *);
+void QueueDelete(queue_t *);
 
 #endif

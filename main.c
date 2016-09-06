@@ -4,23 +4,21 @@
 /* OS includes */
 #include "kernel.h"
 #include "queue.h"
-<<<<<<< HEAD
-=======
 #include "mutex.h"
->>>>>>> f68e6c71688085b213058a31f2c0f793ffd025d9
 
 
 extern volatile task_table_t task_table[MAX_TASKS_COUNT];
+mutex_t mutex;
 
 void Task1()
 {
 	//__asm("nop");
 	//LCD_send_text("Task1");
 	//TaskDelete();
+	
 	while(1)
 	{
-		
-		//GPIO_SetBits(GPIOC, GPIO_Pin_8);
+		GPIO_SetBits(GPIOC, GPIO_Pin_12);
 	}
 }
 
@@ -32,7 +30,7 @@ void Task2()
 	while(1)
 	{
 		//LCD_send_text("Task2");
-		//GPIO_ResetBits(GPIOC, GPIO_Pin_8);
+		GPIO_ResetBits(GPIOC, GPIO_Pin_12);
 	}
 }
 
@@ -40,11 +38,7 @@ void Task3()
 {
 	//__asm("nop");
 	//LCD_send_text("Task3");
-<<<<<<< HEAD
 	//TaskDelete();
-=======
-	TaskDelete();
->>>>>>> f68e6c71688085b213058a31f2c0f793ffd025d9
 	while(1)
 	{
 		//LCD_send_text("Task3");
@@ -72,14 +66,10 @@ void TaskIdle()
 	}
 }
 
-<<<<<<< HEAD
-extern uint32_t queue_high_array[4];
+
 uint32_t d = 0;
-=======
-uint32_t d = 0;
-mutex_t mutex;
+
 queue_t queue;
->>>>>>> f68e6c71688085b213058a31f2c0f793ffd025d9
 int main()
 {
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
@@ -116,33 +106,35 @@ int main()
 	//__asm("movt	R12, #0x77dd");
 	//d = __get_R12();
 	
-<<<<<<< HEAD
+
 	TaskTableInit();
-	init_queues();
 	TaskCreate(Task1, High);
 	TaskCreate(Task2, High);
-=======
+
+	
 	mutex = MutexCreate();
 	if (MutexTake(&mutex))
 	{
-		MutexGive(&mutex);
+		//MutexGive(&mutex);
 	}
-	
-	while (MutexTake(&mutex))
+	/*while (!MutexTake(&mutex))
 	{
-		int p = 1;
-	}
+		TaskDelay();
+	}*/
+	
 	
 	queue = QueueCreate(10);
-	QueueSend(&queue, 5);
-	QueueSend(&queue, 6);
-	QueueSend(&queue, 7);
-	QueueSend(&queue, 4);
+	QueuePush(&queue, 1);
+	QueuePush(&queue, 2);
+	QueuePush(&queue, 3);
+	uint32_t element = QueuePop(&queue);
+	uint32_t count = QueueCount(&queue);
+	printf("%d", count);
+	QueueDelete(&queue);
 	
 	TaskTableInit();	
 	TaskCreate(Task1, Low);
 	TaskCreate(Task2, Low);
->>>>>>> f68e6c71688085b213058a31f2c0f793ffd025d9
 	TaskCreate(Task3, Low);
 	//TaskCreate(TaskIdle, High);
 	//CreateTask(Task3);
